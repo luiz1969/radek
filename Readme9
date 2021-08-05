@@ -1,0 +1,23 @@
+Trigger criada na tabela tcall
+
+Trigger -- aciona_om_record
+		   vai chamar a função			
+           
+           call atualizar_om_record ()
+
+
+
+Function
+atualiza_om_record - executa todo o processo solicitado
+
+Ao inserir um registro na tabela tcall (chama Trigger no Insert)
+, um novo registro deve ser criado na tabela om_record. 
+
+Para isso, cumpra as seguintes regras:
+                - O campo oid deve preenchido automaticamente com um número sequencial (autoincremento)
+                - O campo tipo e subtipo deve ser igual ao valor registrado na tabela tcall (recupera esses dados da tcall e grava na om_record)
+                - O campo data_criacao deve ser preenchido com a data atual (gera no banco)
+                - O campo natureza será preenchido da seguinte forma: (testa a validação e respeita  regra)
+                               - O sistema deverá verificar se o campo tipo e subtipo da tabela tcall possuem relação na tabela om_record_natureza. 
+                               - Caso sim, o campo natureza da tabela om_record deve ser preenchido com o campo natureza da tabela om_record_natureza
+                               - Caso não, preencha o campo natureza da tabela om_record com 0

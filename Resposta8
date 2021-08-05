@@ -1,0 +1,5 @@
+SELECT d.name
+FROM   dogs d
+UNION
+SELECT c.name
+FROM   cats c 

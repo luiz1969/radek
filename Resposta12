@@ -1,0 +1,120 @@
+Foi criada 3 tabelas como solicitado (equipes, tarefa, processo)
+
+1) A primeira armazenará todas as equipes cadastradas no sistema.
+CREATE TABLE `equipes` (
+  `oid` int(11) NOT NULL,
+  `nome` varchar(30) CHARACTER SET utf8 NOT NULL,
+  `nome_b1` varchar(30) CHARACTER SET utf8 NOT NULL,
+  `nome_b2` varchar(30) CHARACTER SET utf8 NOT NULL,
+  `nome_b3` varchar(30) CHARACTER SET utf8 NOT NULL,
+  `status` int(11) NOT NULL DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+
+Inserido esses dados para teste
+INSERT INTO `equipes` (`oid`, `nome`, `nome_b1`, `nome_b2`, `nome_b3`, `status`) VALUES
+(1, 'ALPHA1', 'MT_07019', '13TRF', 'E08796', 0),
+(2, 'BETA2', 'MT_11606', '13TRF', 'E08115', 1),
+(3, 'BETA1', 'MT_07901', '13TRF', 'E09516', 1);
+
+
+
+2) A segunda armazenará o cabeçalho de uma tarefa.
+CREATE TABLE `tarefa` (
+  `oid` int(11) NOT NULL,
+  `nome` varchar(30) CHARACTER SET utf8 NOT NULL,
+  `data_criacao` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `area` varchar(30) CHARACTER SET utf8 NOT NULL,
+  `equipe_responsavel` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+3)A terceira possuirá o log do processo.
+CREATE TABLE `processo` (
+  `oid` int(11) NOT NULL,
+  `data` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `codigo` int(11) NOT NULL,
+  `descricao` varchar(30) CHARACTER SET utf8 NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+4) Criado a procedure cadastra_tarefa que executada recebe o nome e area.
+Chama outra procedure verifica_equipe, que faz o processo do negócio.
+
+
+4.1) cadastra_tarefa
+CREATE DEFINER=`teste`@`%` PROCEDURE `cadastra_tarefa` (IN `pnome` VARCHAR(50), IN `parea` VARCHAR(50), OUT `rresponsavel` INT, OUT `rfuncao` INT)  NO SQL
+BEGIN
+	DECLARE contador INT DEFAULT 1;
+    DECLARE encontrou INT DEFAULT 0;
+    DECLARE tamanho INT DEFAULT 0;
+    DECLARE intSituacao INT DEFAULT 0;
+    DECLARE intCodigo INT DEFAULT 0;
+    
+    DECLARE letra VARCHAR(1);
+    DECLARE area1 VARCHAR(55) DEFAULT "";
+    DECLARE area2 VARCHAR(55) DEFAULT "";
+    DECLARE area3 VARCHAR(55) DEFAULT "";
+    DECLARE area1Contador INT DEFAULT 0;
+    DECLARE areaTotal VARCHAR(55) DEFAULT "";
+    
+    SET tamanho = LENGTH(parea);    
+    SET areaTotal = parea;    
+    
+    WHILE (tamanho > 0) DO        
+        SET encontrou = INSTR(parea,'/');
+        
+        IF area1 = "" THEN
+           SET area1 = MID(parea, contador, encontrou-1);
+        ELSEIF area2 = "" THEN 
+             SET area2 = MID(parea, contador, encontrou-1);
+             ELSEIF area3 = "" THEN 
+             SET area3 = parea;
+   			 SET tamanho = 0;
+        END IF;
+        
+        SET parea = MID(parea, encontrou+1, 55);
+        
+    END WHILE;
+    CALL verifica_equipe(area1, area2, area3, intSituacao, intCodigo);
+
+    INSERT INTO tarefa (nome, area, equipe_responsavel)
+    VALUES (pnome, areaTotal, intCodigo);
+    
+    INSERT INTO processo (codigo, descricao)
+    VALUES (intCodigo,"Tarefa criada com sucesso");
+END$$
+
+4.2) verifica_equipe
+
+CREATE DEFINER=`teste`@`%` PROCEDURE `verifica_equipe` (IN `pArea1` VARCHAR(55), IN `pArea2` VARCHAR(55), IN `pArea3` VARCHAR(55), OUT `rSituacao` INT, OUT `rCodigo` INT)  NO SQL
+BEGIN
+    DECLARE codEquipe INT DEFAULT 0;
+    DECLARE codStatus INT DEFAULT 0;
+    
+    SELECT oid INTO codEquipe
+    FROM equipes
+    WHERE nome_b1 = pArea1 AND nome_b2 = pArea2 AND nome_b3 = pArea3;
+
+	SET rCodigo = codEquipe;
+    
+    ##CASO EXISTA EQUIPE
+    IF (codEquipe > 0) THEN
+       SET rSituacao = codStatus;
+       
+       SELECT status INTO codStatus
+       FROM equipes
+       WHERE oid = codEquipe;        
+       
+       ##E SE FOR INATIVO
+       IF(codStatus = 0) THEN
+         SET rCodigo = 0;
+         SET rSituacao = -2;
+       END IF;
+       
+    ELSE
+         SET rCodigo = 0;
+         SET rSituacao = -1;
+    END IF;
+END$$

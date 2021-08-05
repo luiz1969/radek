@@ -1,0 +1,25 @@
+#include <stdio.h>
+
+int main ()
+{
+  char texto[99];
+  int i;
+  int intTamanho;
+  
+  printf("Inserir uma palavra \n");
+  scanf("%s", texto);
+  
+  
+  for(i=0;i<100;i++){
+    if(texto[i]=='\0'){
+        intTamanho = i;
+        i=100;
+    }
+  }
+  
+  printf("Tamanho do texto é %d \n", intTamanho);  
+        
+  return 0;
+
+} 
+

@@ -1,0 +1,143 @@
+#include <stdio.h>
+#include <string.h>
+
+int Valida(char textoS[], char textoT[], int valor){
+    int i;
+    int continua = 1;
+    
+    for(i=0; i < strlen(textoS); i++){
+        if((textoS[i] >= 'A' && textoS[i] <= 'Z') || strlen(textoS) > 99){
+            continua = 0;
+            i = strlen(textoS);
+        }
+    }    
+    
+    if (continua==1){
+        for(i=0; i < strlen(textoT); i++){
+            if((textoT[i] >= 'A' && textoT[i] <= 'Z') || strlen(textoT) > 99){
+                continua = 0;
+            }
+        }    
+    }
+    
+   
+    return continua;
+}
+
+
+int ConcatERemove(char textoS[],char textoT[], int qtaescolhida){
+    char textoN[99];
+    int i;
+    int j;
+    int tamanhoS =0;
+    int tamanhoT =0;
+    int movimento;
+    int tipo = 0;
+    
+    //Calcular o tamanho da String(s) e String(t)
+    for(i=0;i<100;i++){
+        if(textoS[i]=='\0'){
+            tamanhoS = i;
+        }
+        
+        if(textoT[i]=='\0'){
+            tamanhoT = i;
+        }
+        
+        //Se encontrou os 2 tamanhos, força a saida do loop
+        if(tamanhoT>0 && tamanhoS>0){
+            i=100;
+        }
+    }
+  
+    //Verifica até qtos caracteres são iguais entre as String(s)(t) com conteudo diferentes
+    //Caso precise remover caracteres já atualiza o movimento
+    for (i = 0; i <= tamanhoS; i++)
+    {
+        if (textoS[i]==textoT[i]){
+            j=i;
+        }else{
+            j= i;
+            movimento = tamanhoS - j;
+            //Força a saida do loop
+            i= tamanhoS;
+        }    
+    }
+
+    //Atualiza o movimento para String(s)(t) extremante iguais
+    if(movimento==0){
+        movimento = tamanhoS;
+        j = tamanhoS;
+    }
+   
+    //Monta a String(n) nova até onde é igual da String(s)
+    for(i=0;i<j;i++){
+        textoN[i] = textoS[i]; 
+    }    
+
+    //Se String(n) precisa concatenar com caracteres da String(t)
+    //j - caso tenha movimento pega da comparação de diferentes
+    //j - caso iguais, traz o tamanho da String(s)
+    if(tamanhoT > j){
+        //processo de concatenar
+        for(j=i;j<i+tamanhoT;j++){
+            textoN[j] = textoT[j];
+            if(textoN[j]=='\0'){
+                movimento = movimento + (j-i);
+                j=100;
+            }
+        }
+    }else if (tamanhoT==tamanhoS){
+             movimento = movimento+movimento;
+    }
+
+    //Compara as movimentações com que foi pedida
+    if(qtaescolhida >= movimento){
+      tipo =1;
+    }
+    
+    return tipo;
+    
+}
+
+
+int main ()
+{
+  int k;
+  char textoS[99];
+  char textoT[99];
+  int tipo;
+  int intValida;
+  int intValor;
+  
+  printf("String inicial: ");
+  scanf("%s", textoS);
+  
+  
+  printf("String desejada: ");
+  scanf("%s", textoT);
+  
+  printf("Quantidade de operações: ");
+  scanf("%d", &k);
+  
+  intValida = Valida(textoS,textoT,k);
+  
+  if(intValida==1){
+      tipo = ConcatERemove(textoS,textoT,k);
+      
+      if (tipo==1){
+            printf("SIM");
+      }else{
+            printf("NÃO");  
+      }
+  }else{
+        printf("String inicial e desejada devem ser minúsculas!\n");  
+        printf("String inicial e desejada deve ter 1 ou 100 caracteres!\n");  
+        printf("Quantidade de operação deve estar entre 1 a 100 e deve ser número!\n");  
+  }
+  return 0;
+
+}
+
+
+

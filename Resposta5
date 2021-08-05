@@ -1,0 +1,4 @@
+SELECT  IF(nota<=7,"NULL",nome) as nome, nota, valor
+FROM 	notas n, alunos a 
+WHERE 	valor_min <= a.valor and valor_max >= a.valor 
+ORDER BY nota DESC, IF(nota>7,nome,nota) DESC, IF(nota<=7,"NULL",nota) DESC

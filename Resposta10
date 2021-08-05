@@ -1,0 +1,30 @@
+1) bloco de codigo
+insert into tab values (1,1);
+commit;
+
+após executar esse bloco o banco de dados insere 1 registro
+
+2) bloco de codigo
+insert into tab values (2,2);
+truncate table tab;
+
+com a utilização do truncate a tabela sera limpada
+
+3) bloco de codigo
+insert into tab values (3,3);
+rollback;
+
+o inserte não sera efetivado porque deu um rollback na ação do insert
+
+4) bloco de codigo
+insert into tab values (4,4);
+sem commit, não inseriu inseriu o registro
+
+5) bloco de codigo
+select count(*) from tab.
+o retorno da quantidade de registro deve ser zero
+
+
+
+**Select executado em outra sessão, o resultado é o mesmo se obedecido ordem de processamento dos blocos acima
+

@@ -1,0 +1,8 @@
+Resposta item 2
+
+Para cada múltiplo de 3, imprima "Foo", ao invés do número.
+Para cada múltiplo de 5, imprima "Baa", ao invés do número.
+Para números múltiplos simultaneamente de 3 e 5, imprima "FooBaa", ao invés do número.
+
+
+Somente executar o codigo - (Resposta2)
